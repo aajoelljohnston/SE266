@@ -1,13 +1,14 @@
 <?php
+namespace murach\cart {
 // Add an item to the cart
-function add_item($key, $quantity) {
+function add_item(&$cart, $key, $quantity) {
     global $products;
     if ($quantity < 1) return;
 
     // If item already exists in cart, update quantity
-    if (isset($_SESSION['cart13'][$key])) {
-        $quantity += $_SESSION['cart13'][$key]['qty'];
-        update_item($key, $quantity);
+    if (isset($cart[$key])) {
+        $quantity += $cart[$key]['qty'];
+        update_item($cart, $key, $quantity);
         return;
     }
 
@@ -20,32 +21,33 @@ function add_item($key, $quantity) {
         'qty'  => $quantity,
         'total' => $total
     );
-    $_SESSION['cart13'][$key] = $item;
+    $cart[$key] = $item;
 }
 
 // Update an item in the cart
-function update_item($key, $quantity) {
+function update_item(&$cart, $key, $quantity) {
     global $products;
     $quantity = (int) $quantity;
-    if (isset($_SESSION['cart13'][$key])) {
-        if ($quantity <= 0) {
-            unset($_SESSION['cart13'][$key]);
-        } else {
-            $_SESSION['cart13'][$key]['qty'] = $quantity;
-            $total = $_SESSION['cart13'][$key]['cost'] *
-                     $_SESSION['cart13'][$key]['qty'];
-            $_SESSION['cart13'][$key]['total'] = $total;
+        if (isset($cart[$key])) {
+            if ($quantity <= 0) {
+                unset($cart[$key]);
+            } else {
+                $cart[$key]['qty'] = $quantity;
+                $total = $cart[$key]['cost'] *
+                         $cart[$key]['qty'];
+                $cart[$key]['total'] = $total;
+            }
         }
     }
-}
 
 // Get cart subtotal
-function get_subtotal () {
+function get_subtotal($cart, $decimals = 2) {
     $subtotal = 0;
-    foreach ($_SESSION['cart13'] as $item) {
-        $subtotal += $item['total'];
+	foreach ($cart as $item) {
+		$subtotal += $item['total'];
     }
-    $subtotal = number_format($subtotal, 2);
+    $subtotal = number_format($subtotal, $decimals);
     return $subtotal;
+	}
 }
 ?>

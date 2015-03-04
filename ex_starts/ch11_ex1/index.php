@@ -18,7 +18,7 @@ switch( $_POST['action'] ) {
         if (empty($new_task)) {
             $errors[] = 'The new task cannot be empty.';
         } else {
-            $task_list[] = $new_task;
+            array_push($task_list, $new_task);
         }
         break;
     case 'Delete Task':
@@ -26,18 +26,47 @@ switch( $_POST['action'] ) {
         unset($task_list[$task_index]);
         $task_list = array_values($task_list);
         break;
-/*
+
+    //case 'Modify Task':
     case 'Modify Task':
-    
+        $task_index = $_POST['taskid'];
+        $task_to_modify = $task_list[$task_index];
+        break;
+    //case 'Save Changes':
     case 'Save Changes':
-    
+        $i = $_POST['modifiedtaskid'];
+        $modified_task = $_POST['modifiedtask'];
+        if (empty($modified_task)) {
+            $errors[] = 'The modified task cannot be empty.';
+        } else {
+            $task_list[$i] = $modified_task;
+            $modified_task = '';
+        }
+        break;    
+    //case 'Cancel Changes':
     case 'Cancel Changes':
-    
+        $modified_task = '';
+        break;    
+    //case 'Promote Task':
     case 'Promote Task':
-        
+        $task_index = $_POST['taskid'];
+        if ($task_index == 0) {
+            $errors[] = 'You can\'t promote the first task.';
+        } else {
+            // get the two indexes values
+            $task_value = $task_list[$task_index];
+            $prior_task_value = $task_list[$task_index-1];
+
+            // then switch the values
+            $task_list[$task_index-1] = $task_value;
+            $task_list[$task_index] = $prior_task_value;
+            break;
+        }        
+    //case 'Sort Tasks':
     case 'Sort Tasks':
-    
-*/
+        sort($task_list);
+        break;    
+
 }
 
 include('task_list.php');
