@@ -1,13 +1,19 @@
 <?php
-if (isset($_POST['tasklist'])) {
-    $task_list = $_POST['tasklist'];
+// Create a Session with a P cookie of 1 year
+$lifetime = 60 * 60 * 24 * 365;             // 1 year in seconds
+session_set_cookie_params($lifetime, '/');
+session_start();
+
+// Get Array of task from Session
+if (isset($_SESSION['tasklist'])) {
+    $task_list = $_SESSION['tasklist'];
 } else {
     $task_list = array();
 }
 
 $errors = array();
 
-switch( $_POST['action'] ) {
+switch($_POST['action']) {
     case 'add':
         $new_task = $_POST['newtask'];
         if (empty($new_task)) {
@@ -23,5 +29,9 @@ switch( $_POST['action'] ) {
         break;
 }
 
+// Set the Task Array in Session
+$_SESSION['tasklist'] = $task_list;
+
 include('task_list.php');
+
 ?>
